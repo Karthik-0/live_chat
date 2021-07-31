@@ -4,6 +4,7 @@ import resolve from '@rollup/plugin-node-resolve';
 import livereload from 'rollup-plugin-livereload';
 import { terser } from 'rollup-plugin-terser';
 import css from 'rollup-plugin-css-only';
+import sveltePreprocess from "svelte-preprocess";
 
 const production = !process.env.ROLLUP_WATCH;
 
@@ -32,8 +33,8 @@ export default {
 	input: 'src/main.js',
 	output: {
 		sourcemap: true,
-		format: 'iife',
-		name: 'app',
+		format: 'umd',
+		name: 'TChat',
 		file: 'public/build/bundle.js'
 	},
 	plugins: [
@@ -41,7 +42,11 @@ export default {
 			compilerOptions: {
 				// enable run-time checks when not in production
 				dev: !production
-			}
+			},
+			preprocess: sveltePreprocess({
+				sourceMap: !production,
+				postcss: true,
+			}),
 		}),
 		// we'll extract any component CSS out into
 		// a separate file - better for performance
@@ -68,7 +73,7 @@ export default {
 
 		// If we're building for production (npm run build
 		// instead of npm run dev), minify
-		production && terser()
+		production && terser({ output: { comments: false } })
 	],
 	watch: {
 		clearScreen: false
