@@ -47,7 +47,7 @@
 
 </script>
 
-<main class="p-4 tp-chat" style="height: {height}; width: {width};" date-unread_count={unreadCount}>
+<main class="p-4 tp-chat" style="height: {height}; width: {width};" data-unread_count={unreadCount}>
 	<Messages user={user} chats={chats} height={height} calculateUnreadCount={calculateUnreadCount} />
 	<MessageForm db={db} room={room} user={user}/>
 </main>
