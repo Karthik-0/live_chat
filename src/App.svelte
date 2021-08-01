@@ -19,11 +19,11 @@
 	const query = db.collection(room).orderBy("sentAt");
 	const chats = collectionData(query, "id").pipe(startWith([]));
 
-	afterUpdate(async () => {
+	const calculateUnreadCount = () => {
 		if (!isElementVisible(document.querySelector('.tp-chat'))) {
 			unreadCount += 1
 		}
-	})
+	}
 
 	onMount(() => {
 		onVisibilityChange(updatePageTitle)
@@ -47,8 +47,8 @@
 
 </script>
 
-<main class="p-4 tp-chat" style="height: {height}; width: {width};">
-	<Messages user={user} chats={chats} height={height}  />
+<main class="p-4 tp-chat" style="height: {height}; width: {width};" date-unread_count={unreadCount}>
+	<Messages user={user} chats={chats} height={height} calculateUnreadCount={calculateUnreadCount} />
 	<MessageForm db={db} room={room} user={user}/>
 </main>
 

@@ -1,9 +1,10 @@
 <script>
     import { afterUpdate, onDestroy, onMount } from 'svelte'
     import Message from './Message.svelte';
-	export let user, height, chats;
+	export let user, height, chats, calculateUnreadCount;
 
     afterUpdate(async () => {
+        calculateUnreadCount();
 		updateScroll();
 	})
 
