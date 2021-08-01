@@ -3,8 +3,9 @@
 	import {startWith} from 'rxjs/operators';
 	import Message from './Message.svelte';
 	import {initializeFirebase} from './firebase';
-	import { afterUpdate, onDestroy } from 'svelte'
+	import { afterUpdate, onDestroy, onMount } from 'svelte'
 	import {onVisibilityChange} from './visibility';
+	import {isElementVisible} from './utils';
 	
 	const interval = setInterval(() => updatePageTitle(), 500);
 	export let user, config, height, room, width;
@@ -21,28 +22,22 @@
 	afterUpdate(async () => {
 		updateScroll();
 
-		if (isPageHidden()) {
+		if (!isElementVisible(document.querySelector('.messages'))) {
 			unreadCount += 1
 		}
 	})
 
-	function isPageHidden(){
-		return document.hidden || document.msHidden || document.webkitHidden || document.mozHidden;
- 	}
-
 	const updatePageTitle = () => {
-		if (isPageHidden() & unreadCount > 0) {
+		if (!isElementVisible(document.querySelector('.messages')) & unreadCount > 0) {
 			var newTitle = '(' + unreadCount + ') ' + title;
     		document.title = newTitle;
 		}
 		
-		if (!isPageHidden()) {
+		if (isElementVisible(document.querySelector('.messages'))) {
 			unreadCount = 0;
 			document.title = title
 		}
 	}
-
-	onVisibilityChange(updatePageTitle)
 
 	function sendMessage() {
 		if (!message) return;
@@ -61,6 +56,10 @@
 		const chatWindow = document.querySelector('.messages');
 		chatWindow.scrollTop = chatWindow.scrollHeight;   
 	}
+
+	onMount(() => {
+		onVisibilityChange(updatePageTitle)
+	});
 
 	onDestroy(() => {
 		clearInterval(interval)
