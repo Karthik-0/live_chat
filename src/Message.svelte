@@ -11,9 +11,6 @@
         </span>
     </div>
     <div class="{currentUser ? 'items-end flex-row-reverse': ''} mt-0.5 flex ">
-        <div class="avatar">
-            <img src={chat.avatar} alt="">
-        </div>
         <div class="{currentUser ? 'bg-gray-600  text-white': 'bg-gray-200 text-gray-900'} flex max-w-max px-4 py-1 rounded">
             {chat.message}
         </div>

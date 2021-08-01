@@ -16,20 +16,35 @@
 
 <body>
 
-	<div id="app1"></div>
+	<div class="bg-gray-100 rounded mb-2" style="width: 400px;border: 1px;">
+		<div id="app1"></div>
+	</div>
 
 
 
 	<script src='/build/bundle.js'></script>
 
 	<script>
+		var arr = ["Karthik", "Ram", "Raghu", "Kumar", "Kishore"]
+		const index  = Math.floor(Math.random() * arr.length)
+
 		new TChat({
 			target: document.getElementById("app1"),
 			props: {
-				user: {id: 2, name: "Karthik"},
+				user: {id: index, name: arr[index]},
 				room: "chats",
-				config: {}, //firebase_config
-				height: '200'
+				config: {
+					apiKey: "AIzaSyDHNscCGdWKV0s5ZkFJ1gaEsEBcgeTyGkY",
+					authDomain: "chat-test-e539e.firebaseapp.com",
+					databaseURL: "https://chat-test-e539e-default-rtdb.asia-southeast1.firebasedatabase.app",
+					projectId: "chat-test-e539e",
+					storageBucket: "chat-test-e539e.appspot.com",
+					messagingSenderId: "1066301557589",
+					appId: "1:1066301557589:web:9cc861ad07418dabc47ddc",
+					measurementId: "G-MX8P4DDMXW"
+				}, //firebase_config
+				height: '20',
+				width: '400px'
 			}
 		})
 	</script>
