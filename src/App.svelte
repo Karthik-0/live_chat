@@ -1,30 +1,59 @@
 <script>
-	export let name;
-</script>
+	import {collectionData} from 'rxfire/firestore';
+	import {startWith} from 'rxjs/operators';
+	import {initializeFirebase} from './firebase';
+	import { afterUpdate, onDestroy, onMount } from 'svelte'
+	import {onVisibilityChange} from './visibility';
+	import {isElementVisible} from './utils';
+	import Messages from './Messages.svelte';
+	import MessageForm from './MessageForm.svelte';
+	
+	const interval = setInterval(() => updatePageTitle(), 500);
+	export let user, config, height, room, width;
 
-<main>
-	<h1>Hello {name}!</h1>
-	<p>Visit the <a href="https://svelte.dev/tutorial">Svelte tutorial</a> to learn how to build Svelte apps.</p>
-</main>
 
-<style>
-	main {
-		text-align: center;
-		padding: 1em;
-		max-width: 240px;
-		margin: 0 auto;
-	}
+	let title = document.title
+	let unreadCount = 0;
+	const firebase = initializeFirebase(config);
+	const db = firebase.firestore();
+	const query = db.collection(room).orderBy("sentAt");
+	const chats = collectionData(query, "id").pipe(startWith([]));
 
-	h1 {
-		color: #ff3e00;
-		text-transform: uppercase;
-		font-size: 4em;
-		font-weight: 100;
-	}
-
-	@media (min-width: 640px) {
-		main {
-			max-width: none;
+	const calculateUnreadCount = () => {
+		if (!isElementVisible(document.querySelector('.tp-chat'))) {
+			unreadCount += 1
 		}
 	}
+
+	onMount(() => {
+		onVisibilityChange(updatePageTitle)
+	});
+
+	onDestroy(() => {
+		clearInterval(interval)
+	});
+
+	const updatePageTitle = () => {
+		if (!isElementVisible(document.querySelector('.tp-chat')) & unreadCount > 0) {
+			var newTitle = '(' + unreadCount + ') ' + title;
+    		document.title = newTitle;
+		}
+		
+		if (isElementVisible(document.querySelector('.tp-chat'))) {
+			unreadCount = 0;
+			document.title = title
+		}
+	}
+
+</script>
+
+<main class="p-4 tp-chat" style="height: {height}; width: {width};" data-unread_count={unreadCount}>
+	<Messages user={user} chats={chats} height={height} calculateUnreadCount={calculateUnreadCount} />
+	<MessageForm db={db} room={room} user={user}/>
+</main>
+
+<style global>
+  @tailwind base;
+  @tailwind components;
+  @tailwind utilities;
 </style>
